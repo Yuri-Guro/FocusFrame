@@ -249,35 +249,24 @@ textarea {
 
     /* Adjust the Sidebar for mobile */
     .sidebar {
-        width: 100%; 
+        width: 100%; /* Take up the full screen width */
         padding: 15px;
-        box-sizing: border-box; 
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-        flex-shrink: 0; 
-        z-index: 10;
-        
-        /* Smooth animation for hiding/showing */
-        transition: max-height 0.4s ease, padding 0.4s ease, opacity 0.4s ease;
-        max-height: 800px; /* High enough to hold the text box */
-        overflow: hidden;
+        box-sizing: border-box; /* Prevents padding from breaking the width */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Moves shadow to the bottom */
     }
 
-    /* 3. The class that makes the sidebar disappear */
-    .sidebar.hidden-scroll {
-        max-height: 0;
-        padding-top: 0;
-        padding-bottom: 0;
-        opacity: 0;
-        box-shadow: none;
-    }
-
-    /* 4. Make the text box fit the screen perfectly */
-    textarea {
-        height: 40vh; /* Takes up exactly 40% of the phone's screen height */
-        min-height: 150px;
+    /* Adjust the Main Reading Area */
+    .content {
+        padding: 20px 15px; /* Shrinks the massive desktop padding */
+        width: 100%;
         box-sizing: border-box;
     }
-    
+
+    /* Adjust UI Elements for touch screens */
+    textarea {
+        height: 200px; /* Prevents the text box from taking up the entire screen */
+    }
+ 
     /* Make clickable areas slightly larger for fingers */
     button, .upload-btn, .feedback-btn {
         padding: 14px; 
