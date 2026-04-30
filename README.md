@@ -15,7 +15,7 @@ FocusFrame is a lightweight, client-side web application designed to create an a
 
 ## 💻 How to Run Locally
 FocusFrame requires no installation, backend server, or database.
-1. Clone this repository: `git clone https://github.com/yourusername/focusframe.git`
+1. Clone this repository: `git clone https://github.com/Yuri-Guro/FocusFrame.git`
 2. Open the project folder.
 3. Double-click `index.html` to run the application in any modern web browser (Chrome, Firefox, Edge).
 
