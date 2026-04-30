@@ -67,39 +67,100 @@ toggleFocus.addEventListener('change', (e) => {
 });
 
 // 3. File Upload Logic
-fileUpload.addEventListener('change', (event) => {
+
+// Set up PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+fileUpload.addEventListener('change', async (event) => {
     const file = event.target.files[0];
-    
     if (!file) return;
 
-    // Verify it is a plain text file
-    if (file.type !== "text/plain") {
-        alert("Please upload a .txt (Plain Text) file.");
-        // Reset the input
-        event.target.value = ''; 
-        return;
-    }
-
-    const reader = new FileReader();
-    
-    // When the file is successfully read
-    reader.onload = function(e) {
-        // Switch back to input mode if we are currently reading
+    // Helper function to update UI after text is extracted
+    const loadTextIntoApp = (extractedText) => {
         if (isReadingMode) {
             rawInput.classList.remove('hidden');
             readerOutput.classList.add('hidden');
             btnProcess.innerText = "Format Text";
             isReadingMode = false;
         }
+        rawInput.value = extractedText;
+        event.target.value = ''; // Reset input
+    };
+
+    const fileName = file.name.toLowerCase();
+
+    try {
+        // --- HANDLE PLAIN TEXT (.txt) ---
+        if (fileName.endsWith('.txt')) {
+            const reader = new FileReader();
+            reader.onload = (e) => loadTextIntoApp(e.target.result);
+            reader.readAsText(file);
+        } 
         
-        // Populate the textarea with the file's text
-        rawInput.value = e.target.result;
-    };
+        // --- HANDLE WORD DOCUMENTS (.docx) ---
+        else if (fileName.endsWith('.docx')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                // Mammoth naturally preserves paragraphs with \n\n line breaks
+                mammoth.extractRawText({ arrayBuffer: e.target.result })
+                    .then(result => loadTextIntoApp(result.value))
+                    .catch(err => alert("Error parsing DOCX file."));
+            };
+            reader.readAsArrayBuffer(file);
+        } 
+        
+        // --- HANDLE PDF DOCUMENTS (.pdf) ---
+        else if (fileName.endsWith('.pdf')) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const typedarray = new Uint8Array(e.target.result);
+                const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                let fullText = "";
+                
+                // Loop through each page and extract text
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    
+                    let pageText = "";
+                    let lastY = null;
 
-    reader.onerror = function() {
-        alert("There was an error reading the file.");
-    };
-
-    // Execute the read
-    reader.readAsText(file);
+                    textContent.items.forEach(item => {
+                        if (lastY !== null) {
+                            let yDelta = Math.abs(item.transform[5] - lastY);
+                            
+                            // Increased threshold to 30 to account for larger fonts
+                            if (yDelta > 30) {
+                                pageText += "\n\n"; 
+                            } 
+                            // Normal line wrap
+                            else if (yDelta > 5) {
+                                // Fix for words hyphenated across two lines
+                                if (pageText.trim().endsWith("-")) {
+                                    pageText = pageText.trim().slice(0, -1);
+                                } else {
+                                    pageText += " "; 
+                                }
+                            }
+                        }
+                        pageText += item.str;
+                        lastY = item.transform[5];
+                    });
+                    
+                    fullText += pageText + "\n\n"; 
+                }
+                
+                loadTextIntoApp(fullText);
+            };
+            reader.readAsArrayBuffer(file);
+        } 
+        
+        else {
+            alert("Unsupported file format. Please upload .txt, .docx, or .pdf.");
+            event.target.value = '';
+        }
+    } catch (error) {
+        console.error(error);
+        alert("An error occurred while reading the file.");
+    }
 });
