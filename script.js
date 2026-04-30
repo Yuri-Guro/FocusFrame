@@ -18,9 +18,26 @@ btnProcess.addEventListener('click', () => {
             return;
         }
 
-        // Parse text into sentences and wrap them in <span> tags for the Line Focus tool
-        const sentences = text.split(/(?<=[.!?])\s+/);
-        readerOutput.innerHTML = sentences.map(s => `<span class="sentence">${s} </span>`).join('');
+        // THE FIX: Step 1 - Split the raw text by line breaks to preserve paragraphs
+        const paragraphs = text.split(/\n+/);
+
+        // Step 2 - Loop through each paragraph
+        const formattedHTML = paragraphs.map(para => {
+            const trimmedPara = para.trim();
+            if (!trimmedPara) return '';
+
+            // Step 3 - Split the paragraph into sentences and wrap in spans
+            const sentences = trimmedPara.split(/(?<=[.!?])\s+/);
+            const sentenceSpans = sentences.map(s => {
+                return `<span class="sentence">${s} </span>`;
+            }).join('');
+
+            // Step 4 - Wrap the group of spans in a <p> (paragraph) tag
+            return `<p>${sentenceSpans}</p>`;
+        }).join('');
+
+        // Apply to the DOM
+        readerOutput.innerHTML = formattedHTML;
         
         // Swap UI
         rawInput.classList.add('hidden');

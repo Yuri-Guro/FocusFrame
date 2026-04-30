@@ -86,19 +86,11 @@ textarea {
     display: none; 
 }
 
-/* --- Line Focus Logic --- */
-/* When focus mode is active, dim all sentences */
-#reader-output.focus-active .sentence {
-    opacity: 0.2;
-    transition: opacity 0.2s ease, background-color 0.2s ease;
+/* Add breathing room between preserved paragraphs */
+#reader-output p {
+    margin-bottom: 1.5em;
 }
 
-/* Highlight the specific sentence being hovered over */
-#reader-output.focus-active .sentence:hover {
-    opacity: 1;
-    background-color: var(--highlight-bg);
-    border-radius: 4px;
-}
 /* --- New File Upload Styles --- */
 .upload-btn {
     padding: 12px;
@@ -119,4 +111,33 @@ textarea {
 /* Update hidden class to use !important to ensure the file input stays hidden */
 .hidden { 
     display: none !important; 
+}
+
+/* --- Line Focus Logic --- */
+/* When focus mode is active, dim all sentences */
+#reader-output.focus-active .sentence {
+    opacity: 0.25; 
+    
+    /* THE FIX: Create a transparent buffer zone for the mouse */
+    padding: 5px; 
+    margin: -5px; 
+    border-radius: 6px;
+    
+    /* Removed font-size from the transition. Snapping the size instantly 
+       stops the mouse from "chasing" a slowly growing element. */
+    transition: opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Highlight and ZOOM the specific sentence being hovered over */
+#reader-output.focus-active .sentence:hover {
+    opacity: 1;
+    background-color: var(--highlight-bg);
+    
+    /* Slightly reduced zoom to prevent massive line-break shifts */
+    font-size: 1.15em; 
+    
+    /* Note: font-weight: 600 was removed. Bolding causes words to widen 
+       horizontally, which is the #1 cause of hover spasms in text! */
+    
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); 
 }
