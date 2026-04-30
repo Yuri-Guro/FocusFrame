@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusFrame</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Control Sidebar -->
+        <aside class="sidebar">
+            <h2>FocusFrame</h2>
+            <div class="controls">
+                <button id="btn-process">Format Text</button>
+                <hr>
+                <label>
+                    <input type="checkbox" id="toggle-theme"> High Contrast Mode
+                </label>
+                <label>
+                    <input type="checkbox" id="toggle-font"> OpenDyslexic Font
+                </label>
+                <label>
+                    <input type="checkbox" id="toggle-focus"> Line Focus Mode
+                </label>
+            </div>
+        </aside>
+
+        <!-- Main Reading Pane -->
+        <main class="content">
+            <textarea id="raw-input" placeholder="Paste your reading assignment here..."></textarea>
+            <div id="reader-output" class="hidden"></div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
