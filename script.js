@@ -49,8 +49,17 @@ btnProcess.addEventListener('click', () => {
         readerOutput.classList.add('hidden');
         btnProcess.innerText = "Format Text";
     }
+    // ... inside your formatBtn.addEventListener block ...
     
-    isReadingMode = !isReadingMode;
+    // NEW: Instantly hide the sidebar on mobile when text is formatted
+    if (window.innerWidth <= 768) {
+        document.querySelector('.sidebar').classList.add('hidden-scroll');
+    }
+
+    if (window.innerWidth <= 768) {
+        document.querySelector('.sidebar').classList.add('hidden-scroll');
+    }
+    isReadingMode = !isReadingMode;  
 });
 
 // 2. Accessibility Toggles
@@ -223,3 +232,31 @@ function handleMobileFocus() {
         }
     });
 }
+
+// 5. Mobile Auto-Hide UI on Scroll
+const contentArea = document.querySelector('.content');
+const sidebar = document.querySelector('.sidebar');
+let lastScrollTop = 0;
+
+contentArea.addEventListener('scroll', () => {
+    if (window.innerWidth <= 768) {
+        let currentScrollTop = contentArea.scrollTop;
+        
+        // Prevent iOS bounce into negative numbers
+        if (currentScrollTop < 0) {
+            currentScrollTop = 0;
+        }
+
+        // Hide sidebar when scrolling DOWN
+        if (currentScrollTop > lastScrollTop && currentScrollTop > 50) {
+            sidebar.classList.add('hidden-scroll');
+        } 
+        // Show sidebar when scrolling UP
+        else if (currentScrollTop < lastScrollTop || currentScrollTop <= 0) {
+            sidebar.classList.remove('hidden-scroll');
+        }
+        
+        // Update the tracker for the next frame
+        lastScrollTop = currentScrollTop;
+    }
+}, { passive: true });
