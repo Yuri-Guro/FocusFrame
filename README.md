@@ -23,10 +23,10 @@ FocusFrame requires no installation, backend server, or database.
 This project is deployed using GitHub Pages. 
 **Access the live application here:** [Insert your GitHub Pages URL]
 
-## 👥 Team (Group 1 - CS 2nd Year)
+## 👥 Team (CS2B-3)
 * **James Duquilar:** Project Manager
 * **Neil Bagsic:** Lead Programmer
-* **Joshua Arimado:** QA Tester
+* **Joshua Arimado:** Member
 
 ## 📄 License
 This project is open-source and free to use for educational purposes.
