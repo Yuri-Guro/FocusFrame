@@ -99,3 +99,24 @@ textarea {
     background-color: var(--highlight-bg);
     border-radius: 4px;
 }
+/* --- New File Upload Styles --- */
+.upload-btn {
+    padding: 12px;
+    cursor: pointer;
+    background: #28a745; /* Green to distinguish from Format button */
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 5px;
+    display: block;
+    transition: background 0.2s;
+}
+
+.upload-btn:hover {
+    background: #218838;
+}
+
+/* Update hidden class to use !important to ensure the file input stays hidden */
+.hidden { 
+    display: none !important; 
+}

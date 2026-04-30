@@ -5,6 +5,7 @@ const readerOutput = document.getElementById('reader-output');
 const toggleTheme = document.getElementById('toggle-theme');
 const toggleFont = document.getElementById('toggle-font');
 const toggleFocus = document.getElementById('toggle-focus');
+const fileUpload = document.getElementById('file-upload');
 
 let isReadingMode = false;
 
@@ -46,4 +47,42 @@ toggleFont.addEventListener('change', (e) => {
 
 toggleFocus.addEventListener('change', (e) => {
     readerOutput.classList.toggle('focus-active', e.target.checked);
+});
+
+// 3. File Upload Logic
+fileUpload.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    
+    if (!file) return;
+
+    // Verify it is a plain text file
+    if (file.type !== "text/plain") {
+        alert("Please upload a .txt (Plain Text) file.");
+        // Reset the input
+        event.target.value = ''; 
+        return;
+    }
+
+    const reader = new FileReader();
+    
+    // When the file is successfully read
+    reader.onload = function(e) {
+        // Switch back to input mode if we are currently reading
+        if (isReadingMode) {
+            rawInput.classList.remove('hidden');
+            readerOutput.classList.add('hidden');
+            btnProcess.innerText = "Format Text";
+            isReadingMode = false;
+        }
+        
+        // Populate the textarea with the file's text
+        rawInput.value = e.target.result;
+    };
+
+    reader.onerror = function() {
+        alert("There was an error reading the file.");
+    };
+
+    // Execute the read
+    reader.readAsText(file);
 });
