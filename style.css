@@ -147,16 +147,20 @@ textarea {
     font-size: 1.3rem;
     line-height: 1.8;
     max-width: 800px;
-    margin: 0 auto; 
-    text-align: justify; 
+    margin: 0 auto;
+    text-align: justify;
+    overflow-wrap: break-word;
 }
-
 .hidden { 
     display: none; 
 }
 
 #reader-output p {
-    margin-bottom: 1.5em;
+    display: block;
+    margin-top: 0;
+    /* The !important tag ensures mobile views cannot crush your enter spaces */
+    margin-bottom: 1.5em !important; 
+    line-height: 1.8;
 }
 
 .upload-btn {
@@ -178,19 +182,86 @@ textarea {
 .hidden { 
     display: none !important; 
 }
+/* =========================================
+   LINE FOCUS LOGIC (Desktop & Mobile)
+   ========================================= */
 
-/* --- Line Focus Logic --- */
+/* 1. Base State: Dim all sentences when focus is active */
 #reader-output.focus-active .sentence {
-    opacity: 0.25; 
-    padding: 5px; 
-    margin: -5px; 
+    opacity: 0.25;
+    padding: 5px;
+    margin: -5px;
     border-radius: 6px;
     transition: opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-#reader-output.focus-active .sentence:hover {
-    opacity: 1;
-    background-color: var(--highlight-bg);
-    font-size: 1.15em; 
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); 
+/* 2. DESKTOP ONLY (Devices with a physical mouse) */
+@media (hover: hover) and (pointer: fine) {
+    /* Highlight and ZOOM the specific sentence being hovered over */
+    #reader-output.focus-active .sentence:hover {
+        opacity: 1;
+        background-color: var(--highlight-bg);
+        font-size: 1.15em;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* 3. MOBILE ONLY (Touch screens without a mouse) */
+@media (hover: none) and (pointer: coarse) {
+    /* Prevent accidental touch-hover ghosting */
+    #reader-output.focus-active .sentence {
+        pointer-events: none;
+    }
+
+    /* Apply the JS-driven scroll focus instead */
+    #reader-output.focus-active .sentence.mobile-focus {
+        opacity: 1;
+        background-color: var(--highlight-bg);
+        font-size: 1.1em;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* --- Mobile Responsiveness (Samsung Galaxy S8 & similar devices) --- */
+@media screen and (max-width: 768px) {
+    /* Stack the layout vertically instead of side-by-side */
+    .container {
+        flex-direction: column;
+        height: auto; /* Allows the whole page to scroll naturally */
+    }
+
+    /* Adjust the Sidebar for mobile */
+    .sidebar {
+        width: 100%; /* Take up the full screen width */
+        padding: 15px;
+        box-sizing: border-box; /* Prevents padding from breaking the width */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Moves shadow to the bottom */
+    }
+
+    /* Adjust the Main Reading Area */
+    .content {
+        padding: 20px 15px; /* Shrinks the massive desktop padding */
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Adjust UI Elements for touch screens */
+    textarea {
+        height: 200px; /* Prevents the text box from taking up the entire screen */
+    }
+
+    /* Make clickable areas slightly larger for fingers */
+    button, .upload-btn, .feedback-btn {
+        padding: 14px; 
+        font-size: 1.05em;
+    }
+    #reader-output {
+        text-align: left; 
+        width: 100%;
+        box-sizing: border-box;
+    }
+    body, html {
+        overflow-x: hidden;
+    }
+
 }

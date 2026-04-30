@@ -64,8 +64,16 @@ toggleFont.addEventListener('change', (e) => {
 
 toggleFocus.addEventListener('change', (e) => {
     readerOutput.classList.toggle('focus-active', e.target.checked);
+    
+    // Trigger mobile focus instantly if turned on, or clean it up if turned off
+    if (window.innerWidth <= 768) {
+        if (e.target.checked) {
+            handleMobileFocus();
+        } else {
+            document.querySelectorAll('.mobile-focus').forEach(el => el.classList.remove('mobile-focus'));
+        }
+    }
 });
-
 // 3. File Upload Logic
 
 // Set up PDF.js worker
@@ -164,3 +172,54 @@ fileUpload.addEventListener('change', async (event) => {
         alert("An error occurred while reading the file.");
     }
 });
+
+// 4. Mobile Scroll Auto-Focus Logic
+let scrollFrame;
+
+// Listen for scrolling on the window
+window.addEventListener('scroll', handleMobileFocus, { passive: true });
+
+function handleMobileFocus() {
+    // Only run if we are on mobile, in reading mode, and focus mode is toggled ON
+    if (window.innerWidth > 768 || !isReadingMode || !readerOutput.classList.contains('focus-active')) {
+        return;
+    }
+
+    // requestAnimationFrame ensures the scrolling stays smooth and doesn't lag the phone
+    if (scrollFrame) cancelAnimationFrame(scrollFrame);
+
+    scrollFrame = requestAnimationFrame(() => {
+        const sentences = document.querySelectorAll('#reader-output .sentence');
+        if (sentences.length === 0) return;
+
+        // Find the exact vertical center of the phone screen
+        const screenCenterY = window.innerHeight / 2;
+        let closestIndex = -1;
+        let minDistance = Infinity;
+
+        // Loop through all sentences to find the one closest to the middle
+        sentences.forEach((sentence, index) => {
+            const rect = sentence.getBoundingClientRect();
+            // Calculate the physical center of the text line
+            const sentenceCenterY = rect.top + (rect.height / 2);
+            const distance = Math.abs(screenCenterY - sentenceCenterY);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestIndex = index;
+            }
+        });
+
+        // Reset all sentences
+        sentences.forEach(s => s.classList.remove('mobile-focus'));
+
+        // Highlight the closest sentence, plus the one before and after it (Middle 3)
+       // Reset all sentences
+        sentences.forEach(s => s.classList.remove('mobile-focus'));
+
+        // Highlight ONLY the single closest sentence in the exact center
+        if (closestIndex !== -1) {
+            sentences[closestIndex].classList.add('mobile-focus');
+        }
+    });
+}
