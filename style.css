@@ -1,7 +1,5 @@
-/* Import OpenDyslexic Font */
 @import url('https://fonts.cdnfonts.com/css/opendyslexic');
 
-/* Default Light Theme Variables */
 :root {
     --bg-color: #f4f4f9;
     --text-color: #333333;
@@ -9,10 +7,9 @@
     --highlight-bg: #e0e0e0;
 }
 
-/* High Contrast Dark Mode Variables */
 body.dark-mode {
     --bg-color: #121212;
-    --text-color: #ffeb3b; /* WCAG compliant yellow on black */
+    --text-color: #ffeb3b;
     --sidebar-bg: #1e1e1e;
     --highlight-bg: #333333;
 }
@@ -39,6 +36,35 @@ body.dyslexic-font {
     background: var(--sidebar-bg);
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.how-to-use {
+    margin-top: 30px;
+    background: var(--highlight-bg);
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 0.9em;
+}
+
+.how-to-use summary {
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+    padding: 5px 0;
+}
+
+.how-to-use summary:hover {
+    opacity: 0.8;
+}
+
+.how-to-use ol {
+    margin: 10px 0 0 0;
+    padding-left: 20px;
+    line-height: 1.5;
+}
+
+.how-to-use li {
+    margin-bottom: 8px;
 }
 
 .controls { 
@@ -80,22 +106,22 @@ textarea {
     font-size: 1.3rem;
     line-height: 1.8;
     max-width: 800px;
+    margin: 0 auto; 
+    text-align: justify; 
 }
 
 .hidden { 
     display: none; 
 }
 
-/* Add breathing room between preserved paragraphs */
 #reader-output p {
     margin-bottom: 1.5em;
 }
 
-/* --- New File Upload Styles --- */
 .upload-btn {
     padding: 12px;
     cursor: pointer;
-    background: #28a745; /* Green to distinguish from Format button */
+    background: #28a745;
     color: white;
     font-weight: bold;
     text-align: center;
@@ -108,36 +134,22 @@ textarea {
     background: #218838;
 }
 
-/* Update hidden class to use !important to ensure the file input stays hidden */
 .hidden { 
     display: none !important; 
 }
 
 /* --- Line Focus Logic --- */
-/* When focus mode is active, dim all sentences */
 #reader-output.focus-active .sentence {
     opacity: 0.25; 
-    
-    /* THE FIX: Create a transparent buffer zone for the mouse */
     padding: 5px; 
     margin: -5px; 
     border-radius: 6px;
-    
-    /* Removed font-size from the transition. Snapping the size instantly 
-       stops the mouse from "chasing" a slowly growing element. */
     transition: opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* Highlight and ZOOM the specific sentence being hovered over */
 #reader-output.focus-active .sentence:hover {
     opacity: 1;
     background-color: var(--highlight-bg);
-    
-    /* Slightly reduced zoom to prevent massive line-break shifts */
     font-size: 1.15em; 
-    
-    /* Note: font-weight: 600 was removed. Bolding causes words to widen 
-       horizontally, which is the #1 cause of hover spasms in text! */
-    
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); 
 }
