@@ -289,7 +289,9 @@ textarea {
         font-size: 1.05em;
     }
     #reader-output {
-        text-align: left; 
+        text-align: justify;
+        hyphens: auto; 
+        -webkit-hyphens: auto;
         width: 100%;
         box-sizing: border-box;
         padding-bottom: 50vh;
