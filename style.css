@@ -196,16 +196,33 @@ textarea {
 
 /* 2. DESKTOP ONLY (Devices with a physical mouse) */
 @media (hover: hover) and (pointer: fine) {
-    /* THE FIX: Blur only the sentences that are NOT being hovered */
+    /* 1. Base rule: Blur sentences that are NOT being hovered */
     #reader-output.focus-active:has(.sentence:hover) .sentence:not(:hover) {
         opacity: 0.35;
         filter: blur(3px);
     }
 
-    /* Highlight and ZOOM the specific hovered sentence */
+    /* 2. Partially unblur adjacent sentences (Inside the same paragraph AND across line breaks) */
+    
+    /* A: Inside the same paragraph */
+    #reader-output.focus-active:has(.sentence:hover) .sentence:has(+ .sentence:hover):not(:hover),
+    #reader-output.focus-active:has(.sentence:hover) .sentence:hover + .sentence,
+    
+    /* B: Jumps to the previous/next paragraph directly */
+    #reader-output.focus-active p:has(+ p .sentence:hover:first-child) .sentence:last-child,
+    #reader-output.focus-active p:has(.sentence:hover:last-child) + p .sentence:first-child,
+
+    /* C: Jumps across an empty "Enter" space (.spacer) to the previous/next paragraph */
+    #reader-output.focus-active p:has(+ .spacer + p .sentence:hover:first-child) .sentence:last-child,
+    #reader-output.focus-active p:has(.sentence:hover:last-child) + .spacer + p .sentence:first-child {
+        opacity: 0.70; 
+        filter: blur(1.2px); 
+    }
+
+    /* 3. Keep the specific hovered sentence explicitly sharp and zoomed */
     #reader-output.focus-active .sentence:hover {
         opacity: 1;
-        filter: blur(0px); /* Keeps it explicitly sharp */
+        filter: blur(0px); 
         background-color: var(--highlight-bg);
         font-size: 1.15em;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
@@ -213,7 +230,6 @@ textarea {
         z-index: 2;
     }
 }
-
 /* 3. MOBILE ONLY (Touch screens without a mouse) */
 @media (hover: none) and (pointer: coarse) {
     /* Prevent accidental touch-hover ghosting */
@@ -276,6 +292,7 @@ textarea {
         text-align: left; 
         width: 100%;
         box-sizing: border-box;
+        padding-bottom: 50vh;
     }
     body, html {
         overflow-x: hidden;
