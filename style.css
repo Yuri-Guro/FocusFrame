@@ -92,13 +92,11 @@ body.dyslexic-font {
     transition: all 0.2s ease;
 }
 
-/* Hover effect */
 .feedback-btn:hover {
     background: #ccc;
-    color: #333; /* Ensures text is readable on hover regardless of dark/light mode */
+    color: #333;
 }
 
-/* Make sure the button border adapts to Dark Mode */
 body.dark-mode .feedback-btn {
     border-color: #555;
 }
@@ -158,7 +156,6 @@ textarea {
 #reader-output p {
     display: block;
     margin-top: 0;
-    /* The !important tag ensures mobile views cannot crush your enter spaces */
     margin-bottom: 1.5em !important; 
     line-height: 1.8;
 }
@@ -196,30 +193,22 @@ textarea {
 
 /* 2. DESKTOP ONLY (Devices with a physical mouse) */
 @media (hover: hover) and (pointer: fine) {
-    /* 1. Base rule: Blur sentences that are NOT being hovered */
     #reader-output.focus-active:has(.sentence:hover) .sentence:not(:hover) {
         opacity: 0.35;
         filter: blur(3px);
-    }
-
-    /* 2. Partially unblur adjacent sentences (Inside the same paragraph AND across line breaks) */
-    
-    /* A: Inside the same paragraph */
+    } 
     #reader-output.focus-active:has(.sentence:hover) .sentence:has(+ .sentence:hover):not(:hover),
     #reader-output.focus-active:has(.sentence:hover) .sentence:hover + .sentence,
     
-    /* B: Jumps to the previous/next paragraph directly */
     #reader-output.focus-active p:has(+ p .sentence:hover:first-child) .sentence:last-child,
     #reader-output.focus-active p:has(.sentence:hover:last-child) + p .sentence:first-child,
 
-    /* C: Jumps across an empty "Enter" space (.spacer) to the previous/next paragraph */
     #reader-output.focus-active p:has(+ .spacer + p .sentence:hover:first-child) .sentence:last-child,
     #reader-output.focus-active p:has(.sentence:hover:last-child) + .spacer + p .sentence:first-child {
         opacity: 0.70; 
         filter: blur(1.2px); 
     }
 
-    /* 3. Keep the specific hovered sentence explicitly sharp and zoomed */
     #reader-output.focus-active .sentence:hover {
         opacity: 1;
         filter: blur(0px); 
@@ -232,18 +221,15 @@ textarea {
 }
 /* 3. MOBILE ONLY (Touch screens without a mouse) */
 @media (hover: none) and (pointer: coarse) {
-    /* Prevent accidental touch-hover ghosting */
     #reader-output.focus-active .sentence {
         pointer-events: none;
     }
 
-    /* ONLY blur the other sentences IF JavaScript has locked onto a middle sentence */
     #reader-output.focus-active:has(.mobile-focus) .sentence {
         opacity: 0.35;
         filter: blur(3px);
     }
 
-    /* Keep the active scrolling sentence in sharp focus */
     #reader-output.focus-active .sentence.mobile-focus {
         opacity: 1;
         filter: blur(0px);
@@ -255,35 +241,30 @@ textarea {
     }
 }
 
-/* --- Mobile Responsiveness (Samsung Galaxy S8 & similar devices) --- */
+/* --- Mobile Responsiveness --- */
 @media screen and (max-width: 768px) {
-    /* Stack the layout vertically instead of side-by-side */
     .container {
         flex-direction: column;
-        height: auto; /* Allows the whole page to scroll naturally */
+        height: auto;
     }
 
-    /* Adjust the Sidebar for mobile */
     .sidebar {
-        width: 100%; /* Take up the full screen width */
+        width: 100%; 
         padding: 15px;
-        box-sizing: border-box; /* Prevents padding from breaking the width */
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Moves shadow to the bottom */
+        box-sizing: border-box; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
     }
 
-    /* Adjust the Main Reading Area */
     .content {
-        padding: 20px 15px; /* Shrinks the massive desktop padding */
+        padding: 20px 15px;
         width: 100%;
         box-sizing: border-box;
     }
 
-    /* Adjust UI Elements for touch screens */
     textarea {
-        height: 200px; /* Prevents the text box from taking up the entire screen */
+        height: 200px;
     }
  
-    /* Make clickable areas slightly larger for fingers */
     button, .upload-btn, .feedback-btn {
         padding: 14px; 
         font-size: 1.05em;

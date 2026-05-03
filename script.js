@@ -17,29 +17,21 @@ btnProcess.addEventListener('click', () => {
             alert("Please paste some text first.");
             return;
         }
-
-        // THE FIX: Step 1 - Split the raw text by line breaks to preserve paragraphs
         const paragraphs = text.split(/\n+/);
-
-        // Step 2 - Loop through each paragraph
         const formattedHTML = paragraphs.map(para => {
             const trimmedPara = para.trim();
             if (!trimmedPara) return '';
 
-            // Step 3 - Split the paragraph into sentences and wrap in spans
             const sentences = trimmedPara.split(/(?<=[.!?])\s+/);
             const sentenceSpans = sentences.map(s => {
                 return `<span class="sentence">${s} </span>`;
             }).join('');
 
-            // Step 4 - Wrap the group of spans in a <p> (paragraph) tag
             return `<p>${sentenceSpans}</p>`;
         }).join('');
 
-        // Apply to the DOM
         readerOutput.innerHTML = formattedHTML;
         
-        // Swap UI
         rawInput.classList.add('hidden');
         readerOutput.classList.remove('hidden');
         btnProcess.innerText = "Edit Text";
@@ -49,9 +41,6 @@ btnProcess.addEventListener('click', () => {
         readerOutput.classList.add('hidden');
         btnProcess.innerText = "Format Text";
     }
-    // ... inside your formatBtn.addEventListener block ...
-    
-    // NEW: Instantly hide the sidebar on mobile when text is formatted
     if (window.innerWidth <= 768) {
         document.querySelector('.sidebar').classList.add('hidden-scroll');
     }
@@ -73,8 +62,7 @@ toggleFont.addEventListener('change', (e) => {
 
 toggleFocus.addEventListener('change', (e) => {
     readerOutput.classList.toggle('focus-active', e.target.checked);
-    
-    // Trigger mobile focus instantly if turned on, or clean it up if turned off
+
     if (window.innerWidth <= 768) {
         if (e.target.checked) {
             handleMobileFocus();
@@ -84,15 +72,12 @@ toggleFocus.addEventListener('change', (e) => {
     }
 });
 // 3. File Upload Logic
-
-// Set up PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
 fileUpload.addEventListener('change', async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Helper function to update UI after text is extracted
     const loadTextIntoApp = (extractedText) => {
         if (isReadingMode) {
             rawInput.classList.remove('hidden');
@@ -101,7 +86,7 @@ fileUpload.addEventListener('change', async (event) => {
             isReadingMode = false;
         }
         rawInput.value = extractedText;
-        event.target.value = ''; // Reset input
+        event.target.value = '';
     };
 
     const fileName = file.name.toLowerCase();
@@ -134,7 +119,6 @@ fileUpload.addEventListener('change', async (event) => {
                 const pdf = await pdfjsLib.getDocument(typedarray).promise;
                 let fullText = "";
                 
-                // Loop through each page and extract text
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const textContent = await page.getTextContent();
@@ -146,13 +130,11 @@ fileUpload.addEventListener('change', async (event) => {
                         if (lastY !== null) {
                             let yDelta = Math.abs(item.transform[5] - lastY);
                             
-                            // Increased threshold to 30 to account for larger fonts
                             if (yDelta > 30) {
                                 pageText += "\n\n"; 
                             } 
                             // Normal line wrap
                             else if (yDelta > 5) {
-                                // Fix for words hyphenated across two lines
                                 if (pageText.trim().endsWith("-")) {
                                     pageText = pageText.trim().slice(0, -1);
                                 } else {
@@ -185,28 +167,23 @@ fileUpload.addEventListener('change', async (event) => {
 // 4. Mobile Scroll Auto-Focus Logic
 let scrollFrame;
 
-// Listen for scrolling on the window
 window.addEventListener('scroll', handleMobileFocus, { passive: true });
 
 function handleMobileFocus() {
-    // Only run if we are on mobile, in reading mode, and focus mode is toggled ON
     if (window.innerWidth > 768 || !isReadingMode || !readerOutput.classList.contains('focus-active')) {
         return;
     }
 
-    // requestAnimationFrame ensures the scrolling stays smooth and doesn't lag the phone
     if (scrollFrame) cancelAnimationFrame(scrollFrame);
 
     scrollFrame = requestAnimationFrame(() => {
         const sentences = document.querySelectorAll('#reader-output .sentence');
         if (sentences.length === 0) return;
 
-        // Find the exact vertical center of the phone screen
         const screenCenterY = window.innerHeight / 2;
         let closestIndex = -1;
         let minDistance = Infinity;
 
-        // Loop through all sentences to find the one closest to the middle
         sentences.forEach((sentence, index) => {
             const rect = sentence.getBoundingClientRect();
             // Calculate the physical center of the text line
@@ -218,15 +195,8 @@ function handleMobileFocus() {
                 closestIndex = index;
             }
         });
-
-        // Reset all sentences
         sentences.forEach(s => s.classList.remove('mobile-focus'));
-
-        // Highlight the closest sentence, plus the one before and after it (Middle 3)
-       // Reset all sentences
         sentences.forEach(s => s.classList.remove('mobile-focus'));
-
-        // Highlight ONLY the single closest sentence in the exact center
         if (closestIndex !== -1) {
             sentences[closestIndex].classList.add('mobile-focus');
         }
