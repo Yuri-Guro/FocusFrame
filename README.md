@@ -28,7 +28,7 @@ FocusFrame requires no installation, backend server, or database.
 
 ## 🌐 Live Deployment
 This project is deployed using GitHub Pages. 
-**Access the live application here:** [Insert your GitHub Pages URL]
+**Access the live application here:** [https://yuri-guro.github.io/FocusFrame/]
 
 ## 👥 Team (CS2B-3)
 * **James Duquilar:** Project Manager
